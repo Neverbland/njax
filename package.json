@@ -1,0 +1,23 @@
+{
+  "name": "njax",
+  "homepage": "https://github.com/Neverbland/njax",
+  "description": "NJAX is Navigation in AJAX. Allows browsers to navigate your page without doing full page loads.",
+  "keywords": [
+    "ajax",
+    "pjax",
+    "turbolinks",
+    "navigation",
+    "pageload"
+  ],
+  "author": {
+    "name": "Michał Dudek",
+    "email": "michal@neverbland.com",
+    "url": "http://www.neverbland.com"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.8.5",
+    "gulp-rename": "^1.2.0",
+    "gulp-uglify": "^1.0.1"
+  }
+}
