@@ -727,8 +727,10 @@
 
             // handle script from external source
             if (!isLocalUrl(js.url)) {
-                // if already loaded then ignore
+                // if already loaded then potentially load any modules in that file
+                // and go to the next one
                 if (loadedJavaScript[js.url] !== undefined) {
+                    loadJavaScriptModulesFromUrl(js.url);
                     return true; // continue
                 }
 
@@ -744,17 +746,10 @@
                 return true; // continue
             }
 
-            // handle local script that was already loaded
+            // handle modules in local scripts that have already been loaded previously
+            // scripts with no modules aren't re-executed
             if (loadedJavaScript[js.url] !== undefined) {
-                // but we're only taking care of js modules here
-                // if there was no module in the file then it's already been executed, so don't execute it again
-                if (javaScriptModules[js.url] !== undefined) {
-                    $.each(javaScriptModules[js.url], function(i, module) {
-                        currentJavaScriptModules.push(module);
-                        module.load();
-                    });
-                }
-
+                loadJavaScriptModulesFromUrl(js.url);
                 return true; // continue
             }
 
@@ -777,6 +772,30 @@
         if (!enqueued) { //no jobs were enqueued, we are done here
             callback.apply(this);
         }
+    },
+
+    /**
+     * Load JavaScript modules previously registered in the file from the given URL.
+     *
+     * Returns number of modules loaded.
+     * 
+     * @param  {String} url JavaScript file URL.
+     * @return {Number}
+     */
+    loadJavaScriptModulesFromUrl = function(url) {
+        if (javaScriptModules[url] === undefined) {
+            return 0;
+        }
+
+        var loaded = 0;
+
+        $.each(javaScriptModules[url], function(i, module) {
+            currentJavaScriptModules.push(module);
+            module.load();
+            loaded++;
+        });
+
+        return loaded;
     },
 
     /**
