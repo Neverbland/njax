@@ -1172,14 +1172,12 @@
 
             // get initially loaded JavaScript files
             $('script[src]').each(function() {
-                var $tag = $(this),
-                    url = $tag.attr('src');
+                var url = $(this).attr('src');
 
-                if (url) {
+                if (url && loadedJavaScript[url] === undefined) {
                     loadedJavaScript[url] = {
                         url : url,
-                        local : isLocalUrl(url),
-                        tag : $tag
+                        local : isLocalUrl(url)
                     };
                 }
             });
