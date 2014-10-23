@@ -800,6 +800,21 @@
             unload : typeof onUnloadFn === 'function' ? onUnloadFn : $.noop
         };
 
+        var guessedUrl = false;
+
+        // try to figure out current javascript url if it's not set
+        // this only happens on full page load
+        if (!currentJavaScriptUrl) {
+            // so when script tags are loaded in an order the DOM after that script does not exist yet (I think.... fingers crossed)
+            // therefore if we select last known script tag on the page, it will be the script tag of currently parsed JS
+            // but it also requires `$.njax()` calls to not be wrapped in document.ready callbacks, otherwise shit will break (badly?)
+            var $lastScript = $('script[src]').last();
+            if ($lastScript.length) {
+                currentJavaScriptUrl = $lastScript.attr('src');
+                guessedUrl = true;
+            }
+        }
+
         // and if we can read the URL from which this module is executed
         // then make sure it's assigned to it
         if (currentJavaScriptUrl) {
@@ -808,6 +823,11 @@
             }
 
             javaScriptModules[currentJavaScriptUrl].push(module);
+        }
+
+        // cleanup after guessing
+        if (guessedUrl) {
+            currentJavaScriptUrl = null;
         }
 
         // register it in currently running modules
