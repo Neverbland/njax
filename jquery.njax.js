@@ -682,10 +682,13 @@
      * If it's a local file then it loads it if it wasn't previously loaded.
      * 
      * @param  {Array} files Array of JavaScript files.
+     * @param  {Function} callback [optional] Callback to execute when all files have been loaded.
      */
-    loadJavaScript = function(files,fn) {
+    loadJavaScript = function(files, callback) {
+        callback = callback || $.noop;
+
         var queue = [],
-            enqueued=false,
+            enqueued = false,
             execute = function(url, code) {
                 // execute this code only if it is first in the queue (FIFO)
                 if ($.inArray(url, queue) === 0) {
@@ -715,8 +718,8 @@
                         execute(url, code);
                     }, 50);
                 }
-                if (!queue.length){ //empty queue means that we've finished
-                    fn.apply(this);
+                if (!queue.length) { //empty queue means that we've finished
+                    callback.apply(this);
                 }
             };
 
@@ -772,7 +775,7 @@
         });
 
         if (!enqueued) { //no jobs were enqueued, we are done here
-            fn.apply(this);
+            callback.apply(this);
         }
     },
 
